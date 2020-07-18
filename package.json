@@ -10,6 +10,9 @@
     "app-dev": "cd ./app && yarn run serve",
     "app-install": "cd ./app && yarn",
     "server-install": "cd ./server && yarn",
-    "install": "yarn run app-install && yarn run server-install"
+    "install": "yarn run app-install && yarn run server-install",
+    "app-test": "cd ./app && yarn run test:unit",
+    "server-test": "cd ./server && yarn run test",
+    "test": "yarn run app-test && yarn run server-test"
   }
 }
