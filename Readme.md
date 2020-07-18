@@ -9,7 +9,7 @@ Made with ❤️, Express and Vue
 First clone the repo with
 
 ```
-git clone https:www.github.com/i-mighty/url-shortner
+git clone https://github.com/i-mighty/url-shortner
 ```
 
 Then 
