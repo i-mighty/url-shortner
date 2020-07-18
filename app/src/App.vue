@@ -4,10 +4,10 @@
       <h2 class="title">URLShortner</h2>
       <div class="form">
         <template v-if="formLoading">
-          <p class="form-loading">Shortening Url, please wait ...</p>  
+          <p id="form-loading">Shortening Url, please wait ...</p>  
         </template>
         <template v-else>
-          <form @submit.prevent="shortenURL">
+          <form id="new-url-form" @submit.prevent="shortenURL">
             <input placeholder="Enter URL to shorten" type="text" name="originalUrl" v-model="originalUrl"/>
             <button type="submit">Submit</button>
           </form>
@@ -16,34 +16,47 @@
     </div> 
     <div id="body">
       <template v-if="loading">
-          <p>Loading URLs ...</p>  
+        <p id="content-loading">Loading URLs ...</p>  
       </template>
-
       <template v-else>
-        <h3>List of shortened URLs</h3>
-        <table id="urls">
-          <tr>
-            <th>Original URL</th>
-            <th>Short URL</th>
-          </tr>
-          <tr v-for="row in urls" v-bind:key="row._id">
-            <td>{{ row.originalUrl }}</td>
-            <td>{{ row.shortUrl }}</td>
-          </tr>
-        </table>
-        <b class="table-footer">
-          {{
-            `showing entry ${((page-1)*limit)+1} to ${((page-1)*limit)+urls.length} of ${total}`
-          }}
-        </b>
+        <div id="content">
+          <template v-if="urls.length">
+            <div id="table-view">
+              <h3>List of shortened URLs</h3>
+              <table id="urls">
+                <tr>
+                  <th>Original URL</th>
+                  <th>Short URL</th>
+                </tr>
+                <tr v-for="row in urls" v-bind:key="row._id" v-bind:id="row._id">
+                  <td :id="`original-url${row._id}`">{{ row.originalUrl }}</td>
+                  <td :id="`original-url${row._id}`">{{ row.shortUrl }}</td>
+                </tr>
+              </table>
+              <b class="table-info">
+                {{
+                  `showing entry ${((page-1)*limit)+1} to ${((page-1)*limit)+urls.length} of ${total}`
+                }}
+              </b>
+            </div>
+          </template>
+          <template v-else>
+            <div id="no-data">
+              <b>
+                No urls have been shortened yet
+              </b>
+            </div>
+          </template>
+        </div>
       </template>
-
       <template v-if="pages > 1">
         <div class="pagination">
           <template v-if="page > 1">
-            <button @click="decrementPages">Prev</button>
+            <button id="prev" @click="decrementPages">Prev</button>
           </template>
-          <button @click="incrementPages">Next</button>
+          <template v-if="page < pages">
+            <button id="next" @click="incrementPages">Next</button>
+          </template>
         </div>
       </template>
     </div>
@@ -54,8 +67,9 @@
   import Vue from 'vue'
   import axios from 'axios';
 
-  const baseUrl = `http://localhost:3000`;
-  export default  Vue.extend({ 
+  const baseUrl = process.env.VUE_APP_SERVER_URL;
+
+export default  Vue.extend({ 
     data: function (){
       return {
         loading: false,
@@ -73,8 +87,12 @@
     },
     methods: {
       getUrlList() {
+        const {limit, page} = this;
         this.loading = true
-        axios.post(`${baseUrl}/urls?page=${this.page}&limit=${this.limit}`)
+        axios.post(`${baseUrl}/urls`, {
+          limit,
+          page
+        })
         .then(response => {
           this.loading = false
           this.urls = response.data.data.docs;
@@ -87,8 +105,9 @@
         })
       },
       shortenURL(){
+        const {originalUrl} = this;
         this.formLoading = true;
-        axios.post(`${baseUrl}/url`, {originalUrl: this.originalUrl})
+        axios.post(`${baseUrl}/url`, {originalUrl})
         .then(response => {
           alert(`Url shortened successfully`);
           this.formLoading = false;
@@ -130,7 +149,7 @@
     background-color: #2c3e50;
   }
 
-  .title, .form-loading {
+  .title, #form-loading {
     color: aliceblue;
   }
 
@@ -171,7 +190,7 @@
     color: white;
   }
 
-  .table-footer{
+  .table-info{
     font-size: 14px;
   }
 

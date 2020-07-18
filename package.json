@@ -7,6 +7,9 @@
     "server-build": "cd ./server && yarn build",
     "server-start": "cd ./server && yarn start",
     "server-dev": "cd ./server && yarn run dev",
-    "app-dev": "cd ./app && yarn run serve"
+    "app-dev": "cd ./app && yarn run serve",
+    "app-install": "cd ./app && yarn",
+    "server-install": "cd ./server && yarn",
+    "install": "yarn run app-install && yarn run server-install"
   }
 }
